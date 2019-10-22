@@ -31,25 +31,47 @@ Always include trailing/"dangling" commas after the last value in an object.
 ```js
 //  Bad
 const foo = {
-    bar: 'hello',
-    baz: 'world'
+  bar: 'hello',
+  baz: 'world'
 };
 
 //  Good
 const foo = {
-    bar: 'hello',
-    baz: 'world',
+  bar: 'hello',
+  baz: 'world',
 };
 ```
 
 **Reasoning:**
 - Easier code reviews: When reviewing a git diff where a new item was added at the end of an object, comma dangle prevents it showing up as 2 lines changed.
 
-
 > ESLint: this can be enforced via [this ESLint rule](https://eslint.org/docs/rules/comma-dangle).
 
-## File naming
+### Newline after import
 
+Include **two** newlines after `import` blocks.
+
+**Example:**
+
+```js
+//  Bad
+import foo from 'foo';
+const bar = () => 'bar';
+
+//  Good
+import foo from 'foo';
+
+
+const bar = () => 'bar';
+```
+
+**Reasoning:**
+- Gives a clear visual distinction from where the `import`s end and the code starts.
+- Looks much nicer.
+
+> ESLint: this can be enforced via [this ESLint rule](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/newline-after-import.md).
+
+## File naming
 
 ### Prefer `.jsx`/`.tsx` extension for React files
 
@@ -156,6 +178,46 @@ Use the [`classnames`](https://github.com/JedWatson/classnames) package to simpl
 - Cleaner way to handle conditional styles
 - Handles null/undefined without literally adding the string `undefined` as a `className`
 
+### Higher-order component naming
+
+[HOCs](https://reactjs.org/docs/higher-order-components.html) names should be prefixed with `"with-"` (eg: `withError`). If possible, the wrapped component should be named `WrappedComponent`.
+
+**Example:**
+
+```jsx
+//  Bad
+const errorHoc = (component) => {
+  // ...
+}
+
+//  Good
+const withError = (WrappedComponent) => {
+  // ...
+}
+```
+
+**Reasoning:**
+- Implies the underlying compositional nature of HOCs ("composing some component _with_ this HOC").
+- Naming `WrappedComponent` like that lets everyone reading your code know that this component is being "wrapped" in functionality.
+- Consistency across the codebase.
+
+### Custom Hooks naming
+
+[Custom Hooks](https://reactjs.org/docs/hooks-custom.html) names should be prefixed with `"use-"` (eg: `useMediaQuery`).
+
+**Example:**
+
+```jsx
+//  Bad
+const hookForScrolling = () => {};
+
+//  Good
+const useScroll = () => {};
+```
+
+**Reasoning:**
+- React's internal hooks follow this convention (`useState`, `useEffect`).
+- Consistency across the codebase.
 
 ## Redux
 
@@ -174,28 +236,28 @@ Use the actionsMap pattern for creating reducers.
 
 ```js
 const initialState = {
-   count: 0,
+  count: 0,
 };
 
 //  Use the actionTypes constants as dynamic keys
 const actionsMap = {
-    [actionTypes.INCREMENT]: (state) => ({
-        ...state,
-        count: state.count + 1,
-    }),
-    [actionTypes.DECREMENT]: (state) => ({
-        ...state,
-        count: state.count - 1,
-    }),
+  [actionTypes.INCREMENT]: (state) => ({
+    ...state,
+    count: state.count + 1,
+  }),
+  [actionTypes.DECREMENT]: (state) => ({
+    ...state,
+    count: state.count - 1,
+  }),
 };
 
 //  This would be broken off into a utility somewhere
 const reducer = (state, action) => {
-    const reducerFn = actionsMap[action.type];
-    if (reducerFn) {
-        return reducerFn(state, action);
-    }
-    return state;
+  const reducerFn = actionsMap[action.type];
+  if (reducerFn) {
+    return reducerFn(state, action);
+  }
+  return state;
 };
 
 ```
